@@ -106,7 +106,7 @@ export function DashboardHome() {
                 <div
                   key={post.id}
                   className="flex items-center gap-3 px-5 py-3 cursor-pointer hover:bg-surface-2 transition-colors"
-                  onClick={() => navigate(`posts/${post.slug}`)}
+                  onClick={() => navigate(`../posts/${post.slug}`)}
                 >
                   <div className="flex-1 min-w-0">
                     <span className="text-sm font-medium text-text-primary">
