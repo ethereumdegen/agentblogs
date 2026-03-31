@@ -14,6 +14,7 @@ export function BlogEditorPage() {
   const isNew = !existingSlug || existingSlug === "new";
 
   const [slug, setSlug] = useState("");
+  const [slugManual, setSlugManual] = useState(false);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
@@ -143,13 +144,28 @@ export function BlogEditorPage() {
           <Input
             label="Title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              if (isNew && !slugManual) {
+                setSlug(
+                  e.target.value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, "")
+                    .replace(/\s+/g, "-")
+                    .replace(/-+/g, "-")
+                    .replace(/^-|-$/g, "")
+                );
+              }
+            }}
             placeholder="My awesome blog post"
           />
           <Input
             label="Slug"
             value={slug}
-            onChange={(e) => setSlug(e.target.value)}
+            onChange={(e) => {
+              setSlug(e.target.value);
+              if (isNew) setSlugManual(true);
+            }}
             placeholder="my-awesome-post"
             disabled={!isNew}
           />

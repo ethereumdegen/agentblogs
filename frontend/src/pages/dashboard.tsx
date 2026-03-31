@@ -75,14 +75,14 @@ export function DashboardHome() {
         <Button
           variant="secondary"
           className="h-auto py-4"
-          onClick={() => navigate("posts/new")}
+          onClick={() => navigate("../posts/new")}
         >
           New Blog Post
         </Button>
         <Button
           variant="secondary"
           className="h-auto py-4"
-          onClick={() => navigate("posts")}
+          onClick={() => navigate("../posts")}
         >
           View All Posts
         </Button>
