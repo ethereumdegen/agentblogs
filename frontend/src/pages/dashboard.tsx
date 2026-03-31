@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,13 @@ import { useProject } from "@/contexts/project-context";
 import type { BlogPost } from "@/lib/api";
 
 export function DashboardHome() {
-  const { project } = useProject();
+  const { project, reload } = useProject();
   const navigate = useNavigate();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [renameValue, setRenameValue] = useState("");
+  const renameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!project) return;
@@ -36,7 +39,40 @@ export function DashboardHome() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-xl font-bold text-text-primary uppercase tracking-wide">{project.name}</h1>
+        {isRenaming ? (
+          <input
+            ref={renameInputRef}
+            value={renameValue}
+            onChange={(e) => setRenameValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.currentTarget.blur();
+              } else if (e.key === "Escape") {
+                setIsRenaming(false);
+              }
+            }}
+            onBlur={async () => {
+              const trimmed = renameValue.trim();
+              if (trimmed && trimmed !== project.name) {
+                await api.projects.update(project.id, { name: trimmed });
+                reload();
+              }
+              setIsRenaming(false);
+            }}
+            className="text-xl font-bold text-text-primary uppercase tracking-wide bg-transparent border-b-2 border-accent outline-none w-full"
+          />
+        ) : (
+          <h1
+            className="text-xl font-bold text-text-primary uppercase tracking-wide cursor-pointer"
+            onDoubleClick={() => {
+              setRenameValue(project.name);
+              setIsRenaming(true);
+              setTimeout(() => renameInputRef.current?.select(), 0);
+            }}
+          >
+            {project.name}
+          </h1>
+        )}
         <p className="text-sm text-text-secondary mt-1">
           Overview of your blog.
         </p>
